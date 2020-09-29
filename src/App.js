@@ -17,7 +17,7 @@ const center = {
 const options = {
   styles: mapStyles.light,
   disableDefaultUI: true,
-  // zoomControl: true
+  zoomControl: true
 }
 
 
@@ -34,7 +34,7 @@ function App() {
     <div>
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
-        zoom={12}
+        zoom={15}
         center={center}
         options={options}
         onClick={(event) => {
@@ -49,6 +49,13 @@ function App() {
           <Marker
             key={marker.time.toISOString()}
             position={{ lat: marker.lat, lng: marker.lng }}
+            icon={{
+              url: '/placeholder.svg',
+              scaledSize: new window.google.maps.Size(50, 50),
+              // origin: new window.google.maps.Point(0, 0),
+              // anchor: new window.google.maps.Point(25, 25) to center the point-marker
+
+            }}
           />)}
 
       </GoogleMap>
