@@ -1,6 +1,7 @@
 /*global google*/
 import React from 'react';
 import PropTypes from 'prop-types';
+import mapStyles from "./mapStyles";
 
 class GoogleMap extends React.Component {
   constructor(props) {
@@ -10,7 +11,7 @@ class GoogleMap extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(nextProps) {
     const { activeProperty } = nextProps;
     const { index } = activeProperty;
 
@@ -26,21 +27,25 @@ class GoogleMap extends React.Component {
 
   hideAll() {
     const { markers } = this.state;
-
     markers.forEach(marker => {
       marker.infoWindow.close();
     })
   }
 
   componentDidMount() {
-    const { properties, activeProperty } = this.props;
-
+    const { properties, activeProperty, options } = this.props;
     const { latitude, longitude } = activeProperty;
 
     this.map = new google.maps.Map(this.map, {
+      options: {
+        disableDefaultUI: true,
+        zoomControl: true,
+        styles: mapStyles,
+
+      },
       center: { lat: latitude, lng: longitude },
       mapTypeControl: true,
-      zoom: 15
+      zoom: 14
     });
 
     this.createMarkers(properties);
@@ -52,7 +57,7 @@ class GoogleMap extends React.Component {
     const activePropertyIndex = activeProperty.index;
 
     properties.map(property => {
-      const { address, index, latitude, longitude } = property;
+      const { address, index, latitude, longitude, city, picture } = property;
       this.marker = new google.maps.Marker({
         position: { lat: latitude, lng: longitude },
         map: this.map,
@@ -62,14 +67,15 @@ class GoogleMap extends React.Component {
         // },
         icon: {
           url: 'https://svgshare.com/i/QBj.svg',
-          scaledSize: new google.maps.Size(50, 50),
-          // origin: new google.maps.Point(0, -15),
-          // anchor: new google.maps.Point(11, 52),
+          scaledSize: new google.maps.Size(50, 40),
+          origin: new google.maps.Point(0, 0),
+          //anchor: new google.maps.Point(0, 30),
         }
       });
 
       const infoWindow = new google.maps.InfoWindow({
-        content: `<h1>${address}</h1>`
+        content: `<div><img style='width: 13rem; height:10rem' src=${picture}></div>`
+        // content: `<div style='float:left'><img src=${picture}></div><div style='float:right; padding: 10px;'><b>Title</b><br/>${address}<br/>${city}</div>`
       })
 
       this.marker.infoWindow = infoWindow;
